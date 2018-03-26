@@ -111,15 +111,8 @@ module.exports = {
                 console.log(`index upvote ${indexUserUpvote}`)
                 console.log(`index downvote ${indexUserDownvote}`)
                 if ((indexUserUpvote == -1) && (indexUserDownvote == -1)) {
-                    let newUpvote = data.upvote;
-                    newUpvote.push(userId);
-                    Post.findByIdAndUpdate(
-                            postId, {
-                                upvote: newUpvote
-                            }, {
-                                new: true
-                            }
-                        )
+                    data.upvote.push(userId);
+                    data.save()
                         .then(post => {
                             return res.status(200).json({
                                 message: 'succeed to upvote post',
@@ -133,21 +126,9 @@ module.exports = {
                             })
                         })
                 } else if ((indexUserUpvote == -1) && (indexUserDownvote != -1)) {
-                    let newUpvote = data.upvote;
-                    let newDownvote = data.downvote;
-                    newDownvote.splice(indexUserDownvote, 1);
-                    newUpvote.push(userId);
-                    console.log('new upvote')
-                    console.log(newUpvote)
-                    console.log(newDownvote)
-                    Post.findByIdAndUpdate(
-                            postId, {
-                                upvote: newUpvote,
-                                downvote: newDownvote
-                            }, {
-                                new: true
-                            }
-                        )
+                    data.downvote.splice(indexUserDownvote, 1);
+                    data.upvote.push(userId);
+                    data.save()
                         .then(post => {
                             return res.status(200).json({
                                 message: 'succeed to upvote post',
@@ -208,15 +189,8 @@ module.exports = {
                 console.log(`index upvote ${indexUserUpvote}`)
                 console.log(`index downvote ${indexUserDownvote}`)
                 if ((indexUserUpvote == -1) && (indexUserDownvote == -1)) {
-                    let newDownvote = data.downvote;
-                    newDownvote.push(userId);
-                    Post.findByIdAndUpdate(
-                            postId, {
-                                downvote: newDownvote
-                            }, {
-                                new: true
-                            }
-                        )
+                    data.downvote.push(userId);
+                    data.save()
                         .then(post => {
                             return res.status(200).json({
                                 message: 'succeed to downvote post',
@@ -230,21 +204,9 @@ module.exports = {
                             })
                         })
                 } else if ((indexUserUpvote != -1) && (indexUserDownvote == -1)) {
-                    let newUpvote = data.upvote;
-                    let newDownvote = data.downvote;
-                    newUpvote.splice(indexUserUpvote, 1);
-                    newDownvote.push(userId);
-                    console.log('new upvote')
-                    console.log(newUpvote)
-                    console.log(newDownvote)
-                    Post.findByIdAndUpdate(
-                            postId, {
-                                upvote: newUpvote,
-                                downvote: newDownvote
-                            }, {
-                                new: true
-                            }
-                        )
+                    data.upvote.splice(indexUserUpvote, 1);
+                    data.downvote.push(userId);
+                    data.save()
                         .then(post => {
                             return res.status(200).json({
                                 message: 'succeed to downvote post',
