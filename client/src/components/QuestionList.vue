@@ -4,9 +4,9 @@
 <div class="container">
 <div class='row'>
   <div id='content2' class="col-md-8 mx-auto">
-    <div class='row'>
+    <div class='row' v-if='user.id !== ""'>
     <div class="form-tanya col-10 mx-auto">
-      <input type="text" placeholder="Ayo tanya di sini" id="tanya-form" v-model="newQuestion">
+      <input type="text" placeholder="Ayo jangan malu tanya di sini.." id="tanya-form" v-model="newQuestion">
     </div>
     <div class="button-tanya col-2 mx-auto">
       <button class='btn-tanya btn btn-info' @click="emitNewQuestion">Tanya</button>
@@ -18,7 +18,10 @@
 </div>
 <div class="row">
 <div id='content' class="col-md-8 mx-auto">
-<div class="question-box" v-for="(question,i) in this.$store.state.questionsList" :key='i'>
+  <div v-if='filteredQuestions.length === 0'>
+    {{'Penarian tidak ditemukan'}}
+  </div>
+<div class="question-box" v-for="(question,i) in filteredQuestions" :key='i'>
 <div class='row'>
   <div class='poin col-2'>
     <h6>Poin</h6>
@@ -47,17 +50,27 @@
 <script>
 import moment from 'moment'
 import HeaderNav from '@/components/HeaderNav'
+import {mapState, mapGetters} from 'vuex'
 
 export default {
   name: 'QuestionList',
   components: {
     HeaderNav
   },
+  computed: {
+    ...mapState([
+      'search',
+      'user'
+    ]),
+    ...mapGetters([
+      'filteredQuestions'
+    ])
+  },
   data () {
     return {
       questions: this.$store.state.questionsList,
       title: 'Tanya?',
-      description: 'Ayo tanya di sini!',
+      description: 'Ayo tanya apapun di sini!',
       newQuestion: ''
     }
   },

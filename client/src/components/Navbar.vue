@@ -10,15 +10,35 @@ Menu
 </button>
 <div class="collapse navbar-collapse" id="navbarResponsive">
 <ul class="navbar-nav ml-auto">
-<li class="nav-item">
-<a class="nav-link" href="index.html">Home</a>
-</li>
-<li class="nav-item">
-<a class="nav-link" href="about.html">Add Post</a>
-</li>
-<li class="nav-item">
-<a class="nav-link" href="contact.html">Contact</a>
-</li>
+  <router-link :to="{path: '/'}">
+  <li class="nav-item">
+  <a class="nav-link btn">Beranda</a>
+  </li>
+  </router-link>
+
+  <router-link :to="{path: '/'}" v-if='user.id !== ""'>
+  <li class="nav-item">
+  <a class="nav-link btn">{{user.username}}</a>
+  </li>
+  </router-link>
+
+  <router-link :to="{path: '/'}" v-if='user.id !== ""'>
+  <li @click='emitLogout' class="nav-item">
+  <a class="nav-link btn">Keluar</a>
+  </li>
+  </router-link>
+
+  <router-link :to="{path: '/masuk'}" v-if='user.id === ""'>
+  <li class="nav-item">
+  <a class="nav-link btn">Masuk</a>
+  </li>
+  </router-link>
+
+   <router-link :to="{path: '/daftar'}" v-if='user.id === ""'>
+  <li class="nav-item">
+  <a class="nav-link btn">Daftar</a>
+  </li>
+  </router-link>
 </ul>
 </div>
 </div>
@@ -26,7 +46,25 @@ Menu
 </template>
 
 <script>
+import {mapState} from 'vuex'
+
 export default{
+  computed: {
+    ...mapState([
+      'user'
+    ])
+  },
+  methods: {
+    emitLogout: function () {
+      localStorage.setItem('token', '')
+      localStorage.setItem('id', '')
+      localStorage.setItem('username', '')
+      localStorage.setItem('email', '')
+      localStorage.setItem('name', '')
+      // this.$router.push({path: '/'})
+      this.$store.dispatch('clearUser')
+    }
+  }
 }
 </script>
 
@@ -50,7 +88,7 @@ export default{
   color: #343a40;
 }
 
-#mainNav .navbar-nav > li.nav-item > a {
+li.nav-item > a {
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 1px;

@@ -11,16 +11,23 @@ const $http = axios.create({
 export default new Vuex.Store({
   state: {
     user: {
-      id: '',
-      name: '',
-      email: '',
-      token: ''
+      id: localStorage.getItem('id'),
+      name: localStorage.getItem('name'),
+      email: localStorage.getItem('email'),
+      username: localStorage.getItem('username')
     },
+    search: '',
     questionsList: [],
     questionGet: {},
     answersGet: []
   },
   getters: {
+    filteredQuestions: function (state) {
+      let newRegex = new RegExp(state.search, 'ig')
+      return state.questionsList.filter(val => {
+        return newRegex.test(val.question)
+      })
+    }
   },
   mutations: {
     getQuestions: function (state, payload) {
@@ -33,6 +40,21 @@ export default new Vuex.Store({
     },
     getAnswersByQuestion: function (state, payload) {
       state.answersGet = payload.map(val => val)
+    },
+    emitSearch: function (state, payload) {
+      state.search = payload
+    },
+    clearUser: function (state) {
+      state.user.id = ''
+      state.user.name = ''
+      state.user.email = ''
+      state.user.username = ''
+    },
+    updateUser: function (state) {
+      state.user.id = localStorage.getItem('id')
+      state.user.name = localStorage.getItem('name')
+      state.user.email = localStorage.getItem('email')
+      state.user.username = localStorage.getItem('username')
     }
   },
   actions: {
@@ -51,8 +73,30 @@ export default new Vuex.Store({
           localStorage.setItem('token', response.data.data.token)
           localStorage.setItem('id', response.data.data.id)
           localStorage.setItem('name', response.data.data.name)
+          localStorage.setItem('username', response.data.data.username)
           localStorage.setItem('email', response.data.data.email)
-          // this.$outer.push('Home')
+          context.commit('updateUser')
+        })
+    },
+    emitSignup: function (context, payload) {
+      $http({
+        method: 'post',
+        url: '/users/signup',
+        data: {
+          username: payload.username,
+          email: payload.email,
+          password: payload.password,
+          name: payload.name
+        }
+      })
+        .then(response => {
+          console.log(`Response Signup : ${JSON.stringify(response)}`)
+          localStorage.setItem('token', response.data.token)
+          localStorage.setItem('id', response.data.id)
+          localStorage.setItem('name', response.data.name)
+          localStorage.setItem('username', response.data.username)
+          localStorage.setItem('email', response.data.email)
+          context.commit('updateUser')
         })
     },
     getQuestions: function (context) {
@@ -72,7 +116,7 @@ export default new Vuex.Store({
         url: '/posts',
         data: {
           question: payload,
-          user: localStorage.getItem('id')
+          user: context.state.user.id
         }
       })
         .then(response => {
@@ -193,6 +237,12 @@ export default new Vuex.Store({
           console.log('post deleted')
           context.dispatch('getQuestions')
         })
+    },
+    emitSearch: function (context, payload) {
+      context.commit('emitSearch', payload)
+    },
+    clearUser: function (context) {
+      context.commit('clearUser')
     }
   }
 })

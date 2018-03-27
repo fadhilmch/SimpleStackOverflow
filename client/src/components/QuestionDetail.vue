@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="container">
-          <div class='row' v-if="questionGet.user._id === user.id">
+        <div class='row' v-if="questionGet.user._id === user.id">
         <div class='button-custom col-md-8 mx-auto'>
           <div class='row'>
             <div class='offset-8 col-4'>
@@ -63,11 +63,13 @@
             <h5>{{answer.answer}}</h5>
           </div>
           <div class='col-1'>
-            <button v-if="answer.user._id === user.id" @click='emitDeleteAnswer(answer._id)' class='btn btn-danger'><i class="far fa-trash-alt"></i></button>
+            <button :disabled='isEditing' v-if="answer.user._id === user.id" @click='emitDeleteAnswer(answer._id)' class='btn btn-danger'><i class="far fa-trash-alt"></i></button>
           </div>
         </div>
       </div>
+
       </div>
+
       <div class='form-jawab row'>
         <div class='col-md-8 mx-auto'>
         <div class='row'>
@@ -80,7 +82,8 @@
         </div>
         </div>
       </div>
-      </div>
+
+      <!-- </div> -->
   </div>
 </template>
 
@@ -93,7 +96,7 @@
       return {
         newAnswer: '',
         user: {
-          id: localStorage.getItem('id')
+          id: this.$store.state.user.id
         },
         isEditing: false
       }
@@ -121,7 +124,7 @@
       emitNewAnswer: function () {
         this.$store.dispatch('emitNewAnswer', {
           answer: this.newAnswer,
-          userId: localStorage.getItem('id'),
+          userId: this.$store.state.user.id,
           postId: this.id
         })
         this.newAnswer = ''
@@ -129,21 +132,21 @@
       emitUpvoteQuestion: function () {
         console.log('upvote')
         this.$store.dispatch('emitUpvoteQuestion', {
-          userId: localStorage.getItem('id'),
+          userId: this.$store.state.user.id,
           postId: this.id
         })
       },
       emitDownvoteQuestion: function () {
         console.log('downvote')
         this.$store.dispatch('emitDownvoteQuestion', {
-          userId: localStorage.getItem('id'),
+          userId: this.$store.state.user.id,
           postId: this.id
         })
       },
       emitUpvoteAnswer: function (answerId) {
         console.log('upvote answer')
         this.$store.dispatch('emitUpvoteAnswer', {
-          userId: localStorage.getItem('id'),
+          userId: this.$store.state.user.id,
           postId: this.id,
           answerId
         })
@@ -151,7 +154,7 @@
       emitDownvoteAnswer: function (answerId) {
         console.log('downvote answer')
         this.$store.dispatch('emitDownvoteAnswer', {
-          userId: localStorage.getItem('id'),
+          userId: this.$store.state.user.id,
           postId: this.id,
           answerId
         })

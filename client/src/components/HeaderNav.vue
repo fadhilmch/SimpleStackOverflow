@@ -30,6 +30,11 @@ export default{
     return {
       search: ''
     }
+  },
+  watch: {
+    search: function (val) {
+      this.$store.dispatch('emitSearch', val)
+    }
   }
 }
 </script>
