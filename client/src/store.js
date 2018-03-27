@@ -17,16 +17,22 @@ export default new Vuex.Store({
       token: ''
     },
     questionsList: [],
-    questionGet: {}
+    questionGet: {},
+    answersGet: []
   },
   getters: {
   },
   mutations: {
     getQuestions: function (state, payload) {
       state.questionsList = payload.map(val => val)
+      console.log('ini questionList')
+      console.log(state.questionsList)
     },
     getQuestionById: function (state, payload) {
       state.questionGet = payload
+    },
+    getAnswersByQuestion: function (state, payload) {
+      state.answersGet = payload.map(val => val)
     }
   },
   actions: {
@@ -66,7 +72,7 @@ export default new Vuex.Store({
         url: '/posts',
         data: {
           question: payload,
-          user: localStorage.etItem('id')
+          user: localStorage.getItem('id')
         }
       })
         .then(response => {
@@ -100,6 +106,92 @@ export default new Vuex.Store({
         .then(response => {
           console.log('succeed to create answer')
           console.log(response)
+          context.dispatch('getAnswersByQuestion', payload.postId)
+        })
+    },
+    getAnswersByQuestion: function (context, payload) {
+      return new Promise((resolve, reject) => {
+        $http({
+          method: 'get',
+          url: `/answers/${payload}`
+        })
+          .then(response => {
+            console.log('succeed to get answers by question')
+            console.log(response.data.data)
+            context.commit('getAnswersByQuestion', response.data.data)
+            resolve()
+          })
+      })
+    },
+    emitUpvoteQuestion: function (context, payload) {
+      $http({
+        method: 'post',
+        url: '/posts/upvote',
+        data: {
+          userId: payload.userId,
+          postId: payload.postId
+        }
+      })
+        .then(response => {
+          context.dispatch('getQuestionById', payload.postId)
+        })
+    },
+    emitDownvoteQuestion: function (context, payload) {
+      $http({
+        method: 'post',
+        url: '/posts/downvote',
+        data: {
+          userId: payload.userId,
+          postId: payload.postId
+        }
+      })
+        .then(response => {
+          context.dispatch('getQuestionById', payload.postId)
+        })
+    },
+    emitDownvoteAnswer: function (context, payload) {
+      $http({
+        method: 'post',
+        url: '/answers/downvote',
+        data: {
+          userId: payload.userId,
+          answerId: payload.answerId
+        }
+      })
+        .then(response => {
+          context.dispatch('getAnswersByQuestion', payload.postId)
+        })
+    },
+    emitUpvoteAnswer: function (context, payload) {
+      $http({
+        method: 'post',
+        url: '/answers/upvote',
+        data: {
+          userId: payload.userId,
+          answerId: payload.answerId
+        }
+      })
+        .then(response => {
+          context.dispatch('getAnswersByQuestion', payload.postId)
+        })
+    },
+    emitDeleteAnswer: function (context, payload) {
+      $http({
+        method: 'delete',
+        url: `/answers/${payload.answerId}`
+      })
+        .then(response => {
+          context.dispatch('getAnswersByQuestion', payload.postId)
+        })
+    },
+    emitDeletePost: function (context, payload) {
+      $http({
+        method: 'delete',
+        url: `/posts/${payload}`
+      })
+        .then(response => {
+          console.log('post deleted')
+          context.dispatch('getQuestions')
         })
     }
   }
