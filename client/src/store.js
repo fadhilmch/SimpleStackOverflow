@@ -178,6 +178,7 @@ export default new Vuex.Store({
       })
         .then(response => {
           context.dispatch('getQuestionById', payload.postId)
+          context.dispatch('getQuestions')
         })
     },
     emitDownvoteQuestion: function (context, payload) {
@@ -191,6 +192,7 @@ export default new Vuex.Store({
       })
         .then(response => {
           context.dispatch('getQuestionById', payload.postId)
+          context.dispatch('getQuestions')
         })
     },
     emitDownvoteAnswer: function (context, payload) {
