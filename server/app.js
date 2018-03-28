@@ -12,7 +12,7 @@ var users = require('./routes/users');
 var posts = require('./routes/posts');
 var answers = require('./routes/answers');
 
-var dbUrl = 'mongodb://localhost:27017/post';
+var dbUrl = 'mongodb://fadhilmch:123456@ds227119.mlab.com:27119/tanya';
 var db = mongoose.connection;
 
 var app = express();

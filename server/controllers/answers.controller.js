@@ -1,5 +1,8 @@
 const Answer = require('../models/answers.model');
 const Post = require('../models/posts.model');
+const sendingEmail = require('../helpers/sendEmail.helper');
+const kue = require('kue');
+const queue = kue.createQueue();
 
 module.exports = {
     findAnswerByPost(req, res) {
@@ -81,13 +84,44 @@ module.exports = {
             console.log(`ID new answer: ${data._id}`);
 
             Post.findById(req.params.post_id)
+                .populate('user')
+                .exec()
                 .then(post => {
                     post.answers.push(data._id);
                     post.save()
                         .then(updatedPost => {
-                            return res.status(200).json({
-                                message: "Succeed to create answer"
-                            })
+                            Answer.findById(data._id)
+                                .populate('user')
+                                .exec()
+                                .then(answer => {
+                                    var job = queue.create('email', {
+                                        title: 'Notification from Tanya?',
+                                        to: post.user.email,
+                                        name: post.user.name,
+                                        answer: answer.answer,
+                                        answeringName: answer.user.name
+                                    }).save(function (err) {
+                                        if(!err){
+                                            console.log(job)
+                                            return res.status(200).json({
+                                                message: "Succeed to create answer"
+                                            })
+                                        }
+                                        else {
+                                            return res.status(400).json({
+                                                message: "Failed to create answer",
+                                                err
+                                            })
+                                        }
+                                    })
+      
+                                })
+                                .catch(err => {
+                                    return res.status(400).json({
+                                        message: "Failed to create answer",
+                                        err
+                                    })
+                                })
                         })
                         .catch(err => {
                             return res.status(400).json({
