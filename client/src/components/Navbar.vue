@@ -33,7 +33,7 @@ Menu
   <a class="nav-link btn">Masuk</a>
   </li>
   </router-link>
-  
+
    <router-link :to="{path: '/daftar'}" v-if='user.id === "" || user.id === null'>
   <li class="nav-item">
   <a class="nav-link btn">Daftar</a>
