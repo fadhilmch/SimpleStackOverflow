@@ -16,25 +16,25 @@ Menu
   </li>
   </router-link>
 
-  <router-link :to="{path: '/'}" v-if='user.id !== ""'>
+  <router-link :to="{path: '/'}" v-if='user.id !== "" || user.id !== null'>
   <li class="nav-item">
   <a class="nav-link btn">{{user.username}}</a>
   </li>
   </router-link>
 
-  <router-link :to="{path: '/'}" v-if='user.id !== ""'>
+  <router-link :to="{path: '/'}" v-if='user.id !== "" || user.id !== null'>
   <li @click='emitLogout' class="nav-item">
   <a class="nav-link btn">Keluar</a>
   </li>
   </router-link>
 
-  <router-link :to="{path: '/masuk'}" v-if='user.id === ""'>
+  <router-link :to="{path: '/masuk'}" v-if='user.id === "" || user.id === null'>
   <li class="nav-item">
   <a class="nav-link btn">Masuk</a>
   </li>
   </router-link>
-
-   <router-link :to="{path: '/daftar'}" v-if='user.id === ""'>
+  
+   <router-link :to="{path: '/daftar'}" v-if='user.id === "" || user.id === null'>
   <li class="nav-item">
   <a class="nav-link btn">Daftar</a>
   </li>
